@@ -1,0 +1,10 @@
+# Development files
+node_modules
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Editor directories
+.vscode/
+.idea/

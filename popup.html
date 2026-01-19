@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Survsay Settings</title>
+    <link rel="stylesheet" href="util.css" />
+    <style>
+      body {
+        width: 380px;
+        background-color: #f9f9f9;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .container {
+        padding: 18px;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+      .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 0;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .title-group {
+        line-height: 1.2;
+      }
+      .title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #222;
+      }
+      .subtitle {
+        font-size: 14px;
+        color: #777;
+      }
+      .settings-group {
+        background: #fff;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      .subsection-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: #9ca3af;
+        text-transform: uppercase;
+        padding: 12px 0 4px;
+        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: 4px;
+      }
+      .setting {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .setting:last-child {
+        border-bottom: none;
+      }
+      .setting label {
+        font-size: 15px;
+        color: #333;
+      }
+      /* --- Custom Dropdown (div-based) --- */
+      .dropdown {
+        position: relative;
+        width: 180px;
+      }
+      .dropdown-trigger {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        background: #fff;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 10px;
+        color: #374151;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.18s ease-in-out;
+      }
+      .dropdown-trigger:hover {
+        border-color: #a7aae1;
+        background: #faf9fc;
+      }
+      .dropdown-trigger:focus-visible {
+        outline: none;
+        border-color: #696fc7;
+        box-shadow: 0 0 0 3px rgba(105, 111, 199, 0.12);
+      }
+      .dropdown-caret {
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 7px solid #6b7280;
+        transition: transform 0.18s ease;
+      }
+      .dropdown.open .dropdown-caret {
+        transform: rotate(180deg);
+      }
+      .dropdown-menu {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        width: 100%;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        padding: 6px;
+        display: none;
+        z-index: 10;
+      }
+      .dropdown.open .dropdown-menu {
+        display: block;
+      }
+      .dropdown-item {
+        width: 100%;
+        text-align: left;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: none;
+        background: transparent;
+        color: #374151;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.12s ease, color 0.12s ease;
+      }
+      .dropdown-item:hover {
+        background: #a7aae1; /* light purple */
+        color: #1f2937; /* keep text readable */
+      }
+      .dropdown-item.selected {
+        background: #696fc7; /* primary purple */
+        color: #ffffff;
+      }
+      button {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background: #fdfdfd;
+        font-size: 14px;
+      }
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+      input:checked + .slider {
+        background-color: #696fc7;
+      }
+      input:checked + .slider:before {
+        transform: translateX(20px);
+      }
+      .footer {
+        text-align: center;
+      }
+      .reset-button {
+        width: 100%;
+        background: #f1f1f1;
+        color: #d9534f;
+        border-color: #d9534f;
+        cursor: pointer;
+      }
+      .api-key-input {
+        width: 180px;
+        padding: 8px 12px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #374151;
+        transition: border-color 0.18s ease;
+      }
+      .api-key-input:focus {
+        outline: none;
+        border-color: #696fc7;
+        box-shadow: 0 0 0 3px rgba(105, 111, 199, 0.12);
+      }
+      .api-key-input::placeholder {
+        color: #9ca3af;
+      }
+      .api-key-status {
+        font-size: 11px;
+        margin-top: 4px;
+        color: #6b7280;
+      }
+      .api-key-status.valid {
+        color: #10b981;
+      }
+      .api-key-status.invalid {
+        color: #ef4444;
+      }
+      .setting-vertical {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .setting-vertical label {
+        font-size: 15px;
+        color: #333;
+        margin-bottom: 8px;
+      }
+      .api-key-help {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 6px;
+      }
+      .api-key-help a {
+        color: #696fc7;
+        text-decoration: none;
+      }
+      .api-key-help a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">
+          <img
+            src="logo.PNG"
+            alt="Survsay"
+            style="
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+              border-radius: 0;
+            "
+          />
+        </div>
+        <div class="title-group">
+          <div class="title">Survsay Settings</div>
+          <div class="subtitle">Configure your experience</div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="subsection-title">ElevenLabs API</div>
+        <div class="setting-vertical">
+          <label for="elevenlabs-api-key">API Key</label>
+          <input
+            type="password"
+            id="elevenlabs-api-key"
+            class="api-key-input"
+            placeholder="Enter your API key"
+            style="width: 100%"
+          />
+          <div id="api-key-status" class="api-key-status"></div>
+          <div class="api-key-help">
+            Get your key at <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank">elevenlabs.io</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="subsection-title">Google Gemini API</div>
+        <div class="setting-vertical">
+          <label for="gemini-api-key">API Key</label>
+          <input
+            type="password"
+            id="gemini-api-key"
+            class="api-key-input"
+            placeholder="Enter your Gemini API key"
+            style="width: 100%"
+          />
+          <div id="gemini-key-status" class="api-key-status"></div>
+          <div class="api-key-help">
+            Get your key at <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> (free)
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="setting">
+          <label for="floating-mic-toggle">Enable Floating Mic</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="floating-mic-toggle" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting">
+          <label for="mic-position">Mic Position</label>
+          <div id="mic-position" class="dropdown" data-value="top-right">
+            <button
+              type="button"
+              class="dropdown-trigger"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+            >
+              <span class="dropdown-label">Top Right</span>
+              <span class="dropdown-caret"></span>
+            </button>
+            <div class="dropdown-menu" role="listbox">
+              <button
+                class="dropdown-item selected"
+                role="option"
+                data-value="top-right"
+              >
+                Top Right
+              </button>
+              <button class="dropdown-item" role="option" data-value="top-left">
+                Top Left
+              </button>
+              <button
+                class="dropdown-item"
+                role="option"
+                data-value="bottom-right"
+              >
+                Bottom Right
+              </button>
+              <button
+                class="dropdown-item"
+                role="option"
+                data-value="bottom-left"
+              >
+                Bottom Left
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="setting">
+          <label for="busy-position">Busy Indicator Position</label>
+          <div id="busy-position" class="dropdown" data-value="top-right">
+            <button
+              type="button"
+              class="dropdown-trigger"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+            >
+              <span class="dropdown-label">Top Right</span>
+              <span class="dropdown-caret"></span>
+            </button>
+            <div class="dropdown-menu" role="listbox">
+              <button
+                class="dropdown-item selected"
+                role="option"
+                data-value="top-right"
+              >
+                Top Right
+              </button>
+              <button class="dropdown-item" role="option" data-value="top-left">
+                Top Left
+              </button>
+              <button
+                class="dropdown-item"
+                role="option"
+                data-value="bottom-right"
+              >
+                Bottom Right
+              </button>
+              <button
+                class="dropdown-item"
+                role="option"
+                data-value="bottom-left"
+              >
+                Bottom Left
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="setting">
+          <label for="transcription-language">Language</label>
+          <div id="transcription-language" class="dropdown" data-value="en-US">
+            <button
+              type="button"
+              class="dropdown-trigger"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+            >
+              <span class="dropdown-label">English (US)</span>
+              <span class="dropdown-caret"></span>
+            </button>
+            <div class="dropdown-menu" role="listbox">
+              <button
+                class="dropdown-item selected"
+                role="option"
+                data-value="en-US"
+              >
+                English (US)
+              </button>
+              <button class="dropdown-item" role="option" data-value="en-GB">
+                English (UK)
+              </button>
+              <button class="dropdown-item" role="option" data-value="es-ES">
+                Spanish
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="subsection-title">Accessibility</div>
+        <div class="setting">
+          <label for="simplify-mode-toggle">Simplify Mode</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="simplify-mode-toggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="subsection-title">Rewriter Settings</div>
+        <div class="setting">
+          <label for="rewrite-tone">Tone</label>
+          <div id="rewrite-tone" class="dropdown" data-value="original">
+            <button
+              type="button"
+              class="dropdown-trigger"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+            >
+              <span class="dropdown-label">Original</span>
+              <span class="dropdown-caret"></span>
+            </button>
+            <div class="dropdown-menu" role="listbox">
+              <button
+                class="dropdown-item selected"
+                role="option"
+                data-value="original"
+              >
+                Original
+              </button>
+              <button
+                class="dropdown-item"
+                role="option"
+                data-value="professional"
+              >
+                Professional
+              </button>
+              <button class="dropdown-item" role="option" data-value="casual">
+                Casual
+              </button>
+              <button class="dropdown-item" role="option" data-value="friendly">
+                Friendly
+              </button>
+              <button
+                class="dropdown-item"
+                role="option"
+                data-value="confident"
+              >
+                Confident
+              </button>
+              <button class="dropdown-item" role="option" data-value="direct">
+                Direct
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="setting">
+          <label for="rewrite-length">Length</label>
+          <div id="rewrite-length" class="dropdown" data-value="original">
+            <button
+              type="button"
+              class="dropdown-trigger"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+            >
+              <span class="dropdown-label">Keep Original</span>
+              <span class="dropdown-caret"></span>
+            </button>
+            <div class="dropdown-menu" role="listbox">
+              <button
+                class="dropdown-item selected"
+                role="option"
+                data-value="original"
+              >
+                Keep Original
+              </button>
+              <button class="dropdown-item" role="option" data-value="shorter">
+                Make Shorter
+              </button>
+              <button class="dropdown-item" role="option" data-value="longer">
+                Make Longer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <button id="reset-settings" class="reset-button">
+          Reset to Defaults
+        </button>
+      </div>
+
+      <div
+        id="csp-warning"
+        style="display: none; text-align: center; color: #777; margin-top: 15px"
+      >
+        Survsay is not available on this page.
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

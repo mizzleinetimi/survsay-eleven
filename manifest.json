@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Survsay",
+  "description": "Fill forms with your voice. Powered by ElevenLabs Scribe v2.",
+  "version": "0.2.0",
+  "icons": {
+    "16": "logo.PNG",
+    "32": "logo.PNG",
+    "48": "logo.PNG",
+    "128": "logo.PNG"
+  },
+  "permissions": ["storage", "scripting", "activeTab", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Survsay",
+    "default_icon": {
+      "16": "logo.PNG",
+      "32": "logo.PNG",
+      "48": "logo.PNG"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content_script.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "tailwind.css",
+        "logo.PNG"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' https://api.elevenlabs.io https://www.googleapis.com https://www.gstatic.com https://firebaseinstallations.googleapis.com https://identitytoolkit.googleapis.com https://generativelanguage.googleapis.com https://firebaseremoteconfig.googleapis.com; object-src 'self'"
+  }
+}
